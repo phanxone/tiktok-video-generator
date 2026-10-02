@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok AI Affiliate Studio - ระบบสร้างคลิปวิดีโอ & ปักตะกร้าอัตโนมัติ</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #0f0f13;
+            --card-bg: rgba(26, 26, 36, 0.75);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --primary-tiktok: #ff0050;
+            --secondary-tiktok: #00f2fe;
+            --accent-gold: #ffbd03;
+            --text-main: #ffffff;
+            --text-sub: #a0a0b8;
+            --success-color: #00e676;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Kanit', 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 0, 80, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 242, 254, 0.15) 0%, transparent 40%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1300px;
+            margin: 0 auto 30px auto;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .logo i {
+            color: var(--primary-tiktok);
+            filter: drop-shadow(0 0 10px var(--primary-tiktok));
+        }
+
+        .logo span {
+            background: linear-gradient(135deg, var(--text-main), var(--secondary-tiktok));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .badge-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px solid var(--success-color);
+            color: var(--success-color);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--success-color);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--success-color);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+
+        .main-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 992px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--secondary-tiktok);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: var(--text-main);
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary-tiktok);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .btn-generate {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--primary-tiktok), #ff4d00);
+            color: white;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(255, 0, 80, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 0, 80, 0.6);
+        }
+
+        .btn-generate:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Loading State */
+        .loading-box {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid var(--primary-tiktok);
+            border-right: 4px solid var(--secondary-tiktok);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-step {
+            font-size: 15px;
+            color: var(--secondary-tiktok);
+            margin-top: 8px;
+        }
+
+        /* Preview Section */
+        .preview-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .phone-frame {
+            position: relative;
+            width: 280px;
+            height: 500px;
+            background: #000;
+            border: 6px solid #222;
+            border-radius: 36px;
+            margin: 0 auto;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(0, 242, 254, 0.2);
+        }
+
+        .phone-frame video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .phone-overlay {
+            position: absolute;
+            bottom: 20px;
+            left: 15px;
+            right: 15px;
+            pointer-events: none;
+        }
+
+        .basket-tag {
+            background: linear-gradient(135deg, #ffbd03, #ff8c00);
+            color: #000;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .caption-preview {
+            font-size: 13px;
+            line-height: 1.4;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .meta-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .meta-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+        }
+
+        .meta-body {
+            font-size: 15px;
+            color: var(--text-main);
+            white-space: pre-wrap;
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: none;
+            color: var(--secondary-tiktok);
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .copy-btn:hover {
+            text-decoration: underline;
+        }
+
+        .btn-post {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #00e676, #00b0ff);
+            color: black;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 230, 118, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-post:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 230, 118, 0.6);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--card-bg);
+            border: 1px solid var(--success-color);
+            color: var(--text-main);
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 999;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <i class="fa-brands fa-tiktok"></i>
+            <span>TikTok AI Affiliate Studio</span>
+        </div>
+        <div class="badge-status">
+            <div class="dot"></div>
+            <span>DeepSeek AI & Edge-TTS Ready</span>
+        </div>
+    </header>
+
+    <!-- Main Grid -->
+    <div class="main-container">
+        
+        <!-- Left Column: Input Form -->
+        <div class="glass-card">
+            <div class="card-title">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>กรอกข้อมูลสินค้าเพื่อสร้างคอนเทนต์</span>
+            </div>
+
+            <form id="generateForm">
+                <div class="form-group">
+                    <label><i class="fa-solid fa-link"></i> ลิงก์สินค้า TikTok Shop / Affiliate Link</label>
+                    <input type="text" id="affiliate_link" class="form-control" placeholder="https://vt.tiktok.com/xxxx..." value="https://vt.tiktok.com/sample" required>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa-solid fa-box"></i> ชื่อสินค้า</label>
+                    <input type="text" id="product_name" class="form-control" placeholder="เช่น หูฟังบลูทูธไร้สาย เสียงเบสแน่น" value="หูฟังบลูทูธไร้สาย เสียงเบสแน่น" required>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa-solid fa-tags"></i> หมวดหมู่สินค้า</label>
+                    <input type="text" id="product_category" class="form-control" placeholder="เช่น Gadget & IT, แฟชั่น, ความงาม" value="Gadget & IT">
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa-solid fa-star"></i> จุดเด่นสินค้า (USP Highlights)</label>
+                    <textarea id="usp_highlights" class="form-control" placeholder="เช่น แบตอึด 40 ชม., ตัดเสียงรบกวน ANC, กันน้ำ IPX5">แบตอึด 40 ชม., ตัดเสียงรบกวน ANC, กันน้ำ IPX5, เบสแน่นตึ้บ</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa-solid fa-users"></i> กลุ่มเป้าหมาย</label>
+                    <input type="text" id="target_audience" class="form-control" placeholder="เช่น สายฟังเพลง, คนชอบออกกำลังกาย" value="คนชอบฟังเพลง, สายออกกำลังกาย">
+                </div>
+
+                <button type="submit" id="btnSubmit" class="btn-generate">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>สร้างสคริปต์ AI & วิดีโอ MP4 ทันที</span>
+                </button>
+            </form>
+
+            <!-- Loading Spinner -->
+            <div id="loadingBox" class="loading-box">
+                <div class="spinner"></div>
+                <div style="font-size: 17px; font-weight: 600;">กำลังประมวลผลด้วย DeepSeek AI & Edge-TTS</div>
+                <div id="loadingStep" class="loading-step">🧠 กำลังคิดสคริปต์ไวรัลและแฮชแท็ก...</div>
+            </div>
+        </div>
+
+        <!-- Right Column: Live Preview & One-Click Post -->
+        <div class="glass-card preview-container">
+            <div class="card-title">
+                <i class="fa-solid fa-circle-play"></i>
+                <span>ตัวอย่างวิดีโอ & คอนเทนต์ AI (Live Preview)</span>
+            </div>
+
+            <!-- Mobile Phone Frame -->
+            <div class="phone-frame">
+                <video id="videoPlayer" controls loop poster="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80">
+                    <source id="videoSource" src="" type="video/mp4">
+                    เบราว์เซอร์ไม่รองรับวิดีโอ
+                </video>
+                <div class="phone-overlay">
+                    <div class="basket-tag">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span>ปักตะกร้า: <span id="previewBasketName">หูฟังบลูทูธไร้สาย</span></span>
+                    </div>
+                    <div class="caption-preview" id="phoneCaptionOverlay">
+                        คลิกปุ่มสร้างวิดีโอด้านซ้ายเพื่อเริ่มต้น preview คอนเทนต์...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metadata Display Cards -->
+            <div class="meta-card">
+                <div class="meta-header">
+                    <span>📌 ชื่อคลิป (Video Title)</span>
+                    <button class="copy-btn" onclick="copyText('previewTitle')"><i class="fa-regular fa-copy"></i> คัดลอก</button>
+                </div>
+                <div class="meta-body" id="previewTitle">กดปุ่มสร้างวิดีโอเพื่อเจนชื่อคลิป...</div>
+            </div>
+
+            <div class="meta-card">
+                <div class="meta-header">
+                    <span>💬 แคปชัน & แฮชแท็ก (Caption & #Hashtags)</span>
+                    <button class="copy-btn" onclick="copyText('previewCaption')"><i class="fa-regular fa-copy"></i> คัดลอก</button>
+                </div>
+                <div class="meta-body" id="previewCaption">กดปุ่มสร้างวิดีโอเพื่อเจนแคปชันและแฮชแท็ก...</div>
+            </div>
+
+            <!-- One Click Post Button -->
+            <button id="btnPost" class="btn-post" disabled onclick="postToTikTok()">
+                <i class="fa-brands fa-tiktok"></i>
+                <span>🚀 กดโพสต์ลง TikTok พร้อมปักตะกร้าทันที</span>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast">
+        <i class="fa-solid fa-circle-check" style="color: var(--success-color); font-size: 20px;"></i>
+        <div>
+            <div id="toastTitle" style="font-weight: 600;">สำเร็จ!</div>
+            <div id="toastMsg" style="font-size: 13px; color: var(--text-sub);">โพสต์คลิปลง TikTok เรียบร้อยแล้ว</div>
+        </div>
+    </div>
+
+    <script>
+        let currentGeneratedData = null;
+
+        document.getElementById('generateForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const form = document.getElementById('generateForm');
+            const btnSubmit = document.getElementById('btnSubmit');
+            const loadingBox = document.getElementById('loadingBox');
+            const loadingStep = document.getElementById('loadingStep');
+
+            form.style.display = 'none';
+            loadingBox.style.display = 'block';
+
+            // Simulate steps
+            setTimeout(() => { loadingStep.innerText = '🗣️ กำลังพากย์เสียงภาษาไทยด้วย Edge-TTS...'; }, 2000);
+            setTimeout(() => { loadingStep.innerText = '🎬 กำลังประกอบไฟล์วิดีโอ MP4 9:16...'; }, 4000);
+
+            const payload = {
+                product_name: document.getElementById('product_name').value,
+                product_category: document.getElementById('product_category').value,
+                usp_highlights: document.getElementById('usp_highlights').value,
+                target_audience: document.getElementById('target_audience').value,
+                affiliate_link: document.getElementById('affiliate_link').value
+            };
+
+            try {
+                const response = await fetch('/api/generate-content', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    currentGeneratedData = data;
+
+                    // Update Video Player
+                    const videoPlayer = document.getElementById('videoPlayer');
+                    const videoSource = document.getElementById('videoSource');
+                    videoSource.src = data.video_url;
+                    videoPlayer.load();
+                    videoPlayer.play();
+
+                    // Update Text Metadata
+                    document.getElementById('previewTitle').innerText = data.title;
+                    document.getElementById('previewCaption').innerText = data.caption + '\n\n' + data.hashtags;
+                    document.getElementById('previewBasketName').innerText = data.product_name;
+                    document.getElementById('phoneCaptionOverlay').innerText = data.title;
+
+                    // Enable Post Button
+                    document.getElementById('btnPost').disabled = false;
+
+                    showToast('สำเร็จ!', 'สร้างวิดีโอและคอนเทนต์เรียบร้อยพร้อมโพสต์แล้ว');
+                } else {
+                    alert('เกิดข้อผิดพลาด: ' + data.message);
+                }
+            } catch (err) {
+                alert('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้: ' + err.message);
+            } finally {
+                loadingBox.style.display = 'none';
+                form.style.display = 'block';
+            }
+        });
+
+        async function postToTikTok() {
+            if (!currentGeneratedData) return;
+
+            const btnPost = document.getElementById('btnPost');
+            btnPost.disabled = true;
+            btnPost.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังอัปโหลดลง TikTok...';
+
+            try {
+                const response = await fetch('/api/post-tiktok', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(currentGeneratedData)
+                });
+
+                const resData = await response.json();
+
+                if (resData.status === 'success') {
+                    showToast('🎉 โพสต์ลง TikTok สำเร็จ!', 'คลิปวิดีโอพร้อมปักตะกร้าถูกเผยแพร่บน TikTok แล้ว');
+                } else {
+                    alert('ไม่สามารถโพสต์ได้: ' + resData.message);
+                }
+            } catch (err) {
+                alert('เกิดข้อผิดพลาดในการโพสต์: ' + err.message);
+            } finally {
+                btnPost.disabled = false;
+                btnPost.innerHTML = '<i class="fa-brands fa-tiktok"></i> 🚀 กดโพสต์ลง TikTok พร้อมปักตะกร้าทันที';
+            }
+        }
+
+        function copyText(elementId) {
+            const text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text);
+            showToast('คัดลอกแล้ว!', 'ก๊อปปี้ข้อความลงคลิปบอร์ดเรียบร้อย');
+        }
+
+        function showToast(title, msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastTitle').innerText = title;
+            document.getElementById('toastMsg').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3500);
+        }
+    </script>
+</body>
+</html>
