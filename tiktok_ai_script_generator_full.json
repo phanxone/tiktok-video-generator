@@ -1,0 +1,136 @@
+{
+  "name": "TikTok Video Auto Generator (Full Pipeline)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1
+            }
+          ]
+        }
+      },
+      "id": "trigger-node",
+      "name": "Schedule Trigger (ทุก 1 ชม.)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "products",
+        "returnAll": true,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "status",
+              "condition": "eq",
+              "keyValue": "Pending"
+            }
+          ]
+        }
+      },
+      "id": "supabase-read",
+      "name": "ดึงสินค้าจาก Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=YOUR_GEMINI_KEY",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [{\n    \"parts\": [{\n      \"text\": \"คุณคือพนักงานขายมืออาชีพบน TikTok Shop ช่วยเขียนสคริปต์และแคปชันจากสินค้านี้:\\nชื่อสินค้า: {{ $json.product_name }}\\nจุดเด่น: {{ $json.usp_highlights }}\\nกลุ่มเป้าหมาย: {{ $json.target_audience }}\\n\\nตอบเป็น JSON ดังนี้:\\n{\\n  \\\"hook_script\\\": \\\"...\\\",\\n  \\\"full_voice_script\\\": \\\"...\\\",\\n  \\\"video_title\\\": \\\"...\\\",\\n  \\\"tiktok_caption\\\": \\\"...\\\",\\n  \\\"hashtags\\\": \\\"...\\\"\\n}\"\n    }]\n  }]\n}",
+        "options": {}
+      },
+      "id": "gemini-ai-generator",
+      "name": "Gemini AI เจนสคริปต์",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "command": "python c:/71006/Wed_Up_vdo/generate_video_step3.py"
+      },
+      "id": "python-video-generator",
+      "name": "รัน Edge-TTS สร้างวิดีโอ MP4",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "products",
+        "matchColumns": [
+          "id"
+        ],
+        "fieldsToUpdate": {
+          "values": [
+            {
+              "columnName": "status",
+              "columnValue": "Video_Ready"
+            }
+          ]
+        }
+      },
+      "id": "supabase-update",
+      "name": "อัปเดตสถานะใน Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [1120, 300]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger (ทุก 1 ชม.)": {
+      "main": [
+        [
+          {
+            "node": "ดึงสินค้าจาก Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ดึงสินค้าจาก Supabase": {
+      "main": [
+        [
+          {
+            "node": "Gemini AI เจนสคริปต์",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini AI เจนสคริปต์": {
+      "main": [
+        [
+          {
+            "node": "รัน Edge-TTS สร้างวิดีโอ MP4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "รัน Edge-TTS สร้างวิดีโอ MP4": {
+      "main": [
+        [
+          {
+            "node": "อัปเดตสถานะใน Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "name": "TikTok AI Script Generator (Supabase)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1
+            }
+          ]
+        }
+      },
+      "id": "trigger-node",
+      "name": "Schedule Trigger (ทุก 1 ชม.)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "products",
+        "returnAll": true,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "status",
+              "condition": "eq",
+              "keyValue": "Pending"
+            }
+          ]
+        }
+      },
+      "id": "supabase-read",
+      "name": "ดึงสินค้าจาก Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "คุณคือพนักงานขายและ Creator มืออาชีพบน TikTok Shop หน้าที่ของคุณคือสร้างสคริปต์คลิปไวรัลและแคปชันตอบกลับเป็น JSON Format เท่านั้น"
+            },
+            {
+              "role": "user",
+              "content": "=ช่วยเขียนสคริปต์และแคปชันสำหรับ TikTok Shop จากข้อมูลสินค้านี้:\nชื่อสินค้า: {{ $json.product_name }}\nจุดเด่น: {{ $json.usp_highlights }}\nกลุ่มเป้าหมาย: {{ $json.target_audience }}\n\nกรุณาตอบเป็น JSON Format ดังนี้:\n{\n  \"hook_script\": \"...\",\n  \"full_voice_script\": \"...\",\n  \"video_title\": \"...\",\n  \"tiktok_caption\": \"...\",\n  \"hashtags\": \"...\"\n}"
+            }
+          ]
+        },
+        "jsonOutput": true
+      },
+      "id": "openai-ai-generator",
+      "name": "AI สร้าง สคริปต์ & Hashtag",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "products",
+        "matchColumns": [
+          "id"
+        ],
+        "fieldsToUpdate": {
+          "values": [
+            {
+              "columnName": "status",
+              "columnValue": "Script_Generated"
+            }
+          ]
+        }
+      },
+      "id": "supabase-update",
+      "name": "อัปเดตสถานะใน Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger (ทุก 1 ชม.)": {
+      "main": [
+        [
+          {
+            "node": "ดึงสินค้าจาก Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ดึงสินค้าจาก Supabase": {
+      "main": [
+        [
+          {
+            "node": "AI สร้าง สคริปต์ & Hashtag",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI สร้าง สคริปต์ & Hashtag": {
+      "main": [
+        [
+          {
+            "node": "อัปเดตสถานะใน Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
