@@ -1,7 +1,7 @@
 FROM python:3.11-slim
 
-# ติดตั้ง ffmpeg สำหรับตัดต่อวิดีโอ
-RUN apt-get update && apt-get install -y ffmpeg && rm -rf /var/lib/apt/lists/*
+# ติดตั้ง ffmpeg และ fonts ภาษาไทย/ภาษาอังกฤษสำหรับระบบ Linux
+RUN apt-get update && apt-get install -y ffmpeg fonts-freefont-ttf fonts-thai-tlwg && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
