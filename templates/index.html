@@ -434,16 +434,26 @@
             <span>TikTok AI Studio</span>
         </div>
 
-        <!-- Mode Switcher Tabs -->
-        <div class="nav-tabs">
-            <button id="tabNormal" class="tab-btn active" onclick="switchMode('normal')">
-                <i class="fa-solid fa-fire"></i>
-                <span>1. คลิป AI ทั่วไป (ปั๊มผู้ติดตาม)</span>
-            </button>
-            <button id="tabAffiliate" class="tab-btn" onclick="switchMode('affiliate')">
-                <i class="fa-solid fa-basket-shopping"></i>
-                <span>2. คลิป AI + ปักตะกร้า (Affiliate)</span>
-            </button>
+        <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+            <!-- TikTok Connect Button -->
+            <a href="/api/tiktok/login" style="text-decoration: none;">
+                <div style="background: rgba(255, 0, 80, 0.15); border: 1px solid var(--primary-tiktok); color: white; padding: 8px 18px; border-radius: 20px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <i class="fa-brands fa-tiktok" style="color: var(--primary-tiktok);"></i>
+                    <span>เชื่อมต่อ TikTok Account</span>
+                </div>
+            </a>
+
+            <!-- Mode Switcher Tabs -->
+            <div class="nav-tabs">
+                <button id="tabNormal" class="tab-btn active" onclick="switchMode('normal')">
+                    <i class="fa-solid fa-fire"></i>
+                    <span>1. คลิป AI ทั่วไป (ปั๊มผู้ติดตาม)</span>
+                </button>
+                <button id="tabAffiliate" class="tab-btn" onclick="switchMode('affiliate')">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                    <span>2. คลิป AI + ปักตะกร้า (Affiliate)</span>
+                </button>
+            </div>
         </div>
     </header>
 

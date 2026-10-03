@@ -3,13 +3,19 @@ import sys
 import json
 import time
 import requests
-from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask import Flask, render_template, request, jsonify, redirect
+from dotenv import load_dotenv
+
+load_dotenv()
+
 import generate_video_step3
 import tiktok_official_api
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
+TIKTOK_CLIENT_KEY = os.environ.get("TIKTOK_CLIENT_KEY", "aw6xyaatbwc3591u")
+TIKTOK_CLIENT_SECRET = os.environ.get("TIKTOK_CLIENT_SECRET", "nKtcrjKgKjoiT2xH3HucOCegaRggRZmx")
 TIKTOK_ACCESS_TOKEN = os.environ.get("TIKTOK_ACCESS_TOKEN", "")
 
 def call_deepseek_ai(mode, topic_name, category, highlights, audience):
@@ -85,7 +91,51 @@ def call_deepseek_ai(mode, topic_name, category, highlights, audience):
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    has_token = bool(os.environ.get("TIKTOK_ACCESS_TOKEN", ""))
+    return render_template('index.html', has_token=has_token, client_key=TIKTOK_CLIENT_KEY)
+
+# TikTok OAuth Login Route
+@app.route('/api/tiktok/login')
+def tiktok_login():
+    redirect_uri = request.host_url.rstrip('/') + '/api/tiktok/callback'
+    scope = "user.info.basic,video.upload,video.publish"
+    auth_url = f"https://www.tiktok.com/v2/auth/authorize/?client_key={TIKTOK_CLIENT_KEY}&scope={scope}&response_type=code&redirect_uri={redirect_uri}"
+    return redirect(auth_url)
+
+# TikTok OAuth Callback Route
+@app.route('/api/tiktok/callback')
+def tiktok_callback():
+    code = request.args.get('code')
+    if not code:
+        return "Authorization failed: Code not found.", 400
+
+    redirect_uri = request.host_url.rstrip('/') + '/api/tiktok/callback'
+    token_url = "https://open.tiktokapis.com/v2/oauth/token/"
+    
+    headers = {"Content-Type": "application/x-www-form-urlencoded"}
+    data = {
+        "client_key": TIKTOK_CLIENT_KEY,
+        "client_secret": TIKTOK_CLIENT_SECRET,
+        "code": code,
+        "grant_type": "authorization_code",
+        "redirect_uri": redirect_uri
+    }
+
+    try:
+        res = requests.post(token_url, headers=headers, data=data, timeout=15)
+        res_json = res.json()
+        access_token = res_json.get("access_token") or res_json.get("data", {}).get("access_token")
+        
+        if access_token:
+            os.environ["TIKTOK_ACCESS_TOKEN"] = access_token
+            # บันทึกลง .env
+            with open(".env", "a") as f:
+                f.write(f"\nTIKTOK_ACCESS_TOKEN={access_token}\n")
+            return redirect('/?connected=success')
+        else:
+            return f"TikTok Authentication Error: {res_json}", 400
+    except Exception as e:
+        return f"Error: {e}", 500
 
 @app.route('/api/generate-content', methods=['POST'])
 def generate_content():
@@ -98,10 +148,8 @@ def generate_content():
     affiliate_link = data.get('affiliate_link', '')
 
     try:
-        # 1. ให้ DeepSeek AI คิดคอนเทนต์ตามโหมด
         ai_result = call_deepseek_ai(mode, topic_name, category, highlights, audience)
 
-        # 2. สร้างไฟล์วิดีโอ MP4 ในโฟลเดอร์ static/videos
         filename = f"video_{mode}_{int(time.time())}.mp4"
         output_path = os.path.join(app.static_folder, 'videos', filename)
 
@@ -133,7 +181,7 @@ def post_tiktok():
     video_path = data.get('video_path', '')
     title = data.get('title', '')
     caption = data.get('caption', '') + "\n\n" + data.get('hashtags', '')
-    access_token = data.get('access_token', TIKTOK_ACCESS_TOKEN)
+    access_token = os.environ.get("TIKTOK_ACCESS_TOKEN", "")
 
     if not access_token:
         time.sleep(1.2)
@@ -141,7 +189,7 @@ def post_tiktok():
         return jsonify({
             "status": "success",
             "is_simulation": True,
-            "message": f"[Simulation Mode] อัปโหลด ({mode_str}) สำเร็จแล้ว! (หากต้องการโพสต์ลงแอปจริง ให้ใส่ TikTok Access Token)",
+            "message": f"[Simulation Mode] อัปโหลด ({mode_str}) สำเร็จแล้ว! (หากต้องการโพสต์ลงแอปจริง ให้กดปุ่มล็อกอินเชื่อมต่อ TikTok บนหน้าเว็บ)",
             "tiktok_post_id": f"tt_sim_{int(time.time())}"
         })
 
