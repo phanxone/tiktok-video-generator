@@ -5,15 +5,16 @@ import time
 import requests
 from flask import Flask, render_template, request, jsonify, send_from_directory
 import generate_video_step3
+import tiktok_official_api
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
+TIKTOK_ACCESS_TOKEN = os.environ.get("TIKTOK_ACCESS_TOKEN", "")
 
 def call_deepseek_ai(product_name, category, usp, audience):
     """เรียกใช้ DeepSeek API เพื่อคิดสคริปต์ ชื่อคลิป แคปชัน และแฮชแท็ก"""
     if not DEEPSEEK_API_KEY:
-        # Fallback AI Generator หากยังไม่ได้ใส่ API Key ใน Environment
         return {
             "title": f"🔥 {product_name} สายฟังเพลงห้ามพลาด!",
             "voice_script": f"สวัสดีครับทุกคน! วันนี้ผมมีของเด็ดมาแนะนำ {product_name} จุดเด่นคือ {usp} เหมาะสำหรับ {audience} ใครสนใจกดที่ตะกร้าเหลืองได้เลยครับ!",
@@ -53,7 +54,7 @@ def call_deepseek_ai(product_name, category, usp, audience):
         content = res_data['choices'][0]['message']['content']
         return json.loads(content)
     except Exception as e:
-        print(f"DeepSeek API Warning: {e}, falling back to default generator.")
+        print(f"DeepSeek API Warning: {e}")
         return {
             "title": f"🔥 {product_name} ของมันต้องมี!",
             "voice_script": f"สวัสดีครับ! แนะนำ {product_name} {usp} ใครสนใจกดที่ตะกร้าเหลืองได้เลยครับ!",
@@ -91,6 +92,7 @@ def generate_content():
         return jsonify({
             "status": "success",
             "video_url": f"/static/videos/{filename}",
+            "video_path": output_path,
             "title": ai_result.get('title', product_name),
             "caption": ai_result.get('caption', ''),
             "hashtags": ai_result.get('hashtags', '#TikTokShop'),
@@ -104,13 +106,29 @@ def generate_content():
 @app.route('/api/post-tiktok', methods=['POST'])
 def post_tiktok():
     data = request.json or {}
-    # จำลองหรือเรียกใช้ TikTok Content Posting API
-    time.sleep(1.5)
-    return jsonify({
-        "status": "success",
-        "message": "อัปโหลดคลิปและปักตะกร้าลง TikTok สำเร็จเรียบร้อย!",
-        "tiktok_post_id": f"tt_{int(time.time())}"
-    })
+    video_path = data.get('video_path', '')
+    title = data.get('title', '')
+    caption = data.get('caption', '') + "\n\n" + data.get('hashtags', '')
+    access_token = data.get('access_token', TIKTOK_ACCESS_TOKEN)
+
+    if not access_token:
+        # จำลองตอบกลับสำเร็จหากยังไม่ได้ใส่ Token จริง
+        time.sleep(1.5)
+        return jsonify({
+            "status": "success",
+            "is_simulation": True,
+            "message": "[Simulation Mode] อัปโหลดคลิปเตรียมพร้อมแล้ว! (หากต้องการโพสต์ลงแอปจริง ให้ใส่ TikTok Access Token)",
+            "tiktok_post_id": f"tt_sim_{int(time.time())}"
+        })
+
+    # เรียกใช้ TikTok Official Content Posting API v2
+    result = tiktok_official_api.publish_video_to_tiktok(
+        access_token=access_token,
+        video_path=video_path,
+        caption=caption,
+        title=title
+    )
+    return jsonify(result)
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
