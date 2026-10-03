@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TikTok AI Affiliate Studio - ระบบสร้างคลิปวิดีโอ & ปักตะกร้าอัตโนมัติ</title>
+    <title>TikTok AI Studio - ระบบสร้างคลิปวิดีโอ AI (ทั่วไป & ปักตะกร้า)</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,15 +12,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-dark: #0f0f13;
-            --card-bg: rgba(26, 26, 36, 0.75);
+            --bg-dark: #09090e;
+            --card-bg: rgba(20, 20, 32, 0.75);
             --card-border: rgba(255, 255, 255, 0.1);
             --primary-tiktok: #ff0050;
-            --secondary-tiktok: #00f2fe;
+            --secondary-cyan: #00f2fe;
             --accent-gold: #ffbd03;
             --text-main: #ffffff;
-            --text-sub: #a0a0b8;
+            --text-sub: #9090ab;
             --success-color: #00e676;
+            --purple-gradient: linear-gradient(135deg, #7928ca, #ff0080);
+            --cyan-gradient: linear-gradient(135deg, #00f2fe, #4facfe);
         }
 
         * {
@@ -33,102 +35,143 @@
         body {
             background-color: var(--bg-dark);
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(255, 0, 80, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(0, 242, 254, 0.15) 0%, transparent 40%);
+                radial-gradient(circle at 15% 15%, rgba(255, 0, 80, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(0, 242, 254, 0.12) 0%, transparent 45%);
             color: var(--text-main);
             min-height: 100vh;
-            padding: 20px;
+            padding: 24px;
         }
 
+        /* Top Header & Navbar */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1300px;
+            max-width: 1350px;
             margin: 0 auto 30px auto;
             padding-bottom: 20px;
             border-bottom: 1px solid var(--card-border);
+            flex-wrap: wrap;
+            gap: 16px;
         }
 
         .logo {
             display: flex;
             align-items: center;
             gap: 12px;
-            font-size: 24px;
+            font-size: 26px;
             font-weight: 700;
         }
 
         .logo i {
             color: var(--primary-tiktok);
-            filter: drop-shadow(0 0 10px var(--primary-tiktok));
+            filter: drop-shadow(0 0 12px var(--primary-tiktok));
         }
 
         .logo span {
-            background: linear-gradient(135deg, var(--text-main), var(--secondary-tiktok));
+            background: linear-gradient(135deg, var(--text-main), var(--secondary-cyan));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .badge-status {
+        /* Mode Switcher Tabs */
+        .nav-tabs {
+            display: flex;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 6px;
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+            gap: 6px;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: none;
+            background: transparent;
+            color: var(--text-sub);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
-            background: rgba(0, 230, 118, 0.1);
-            border: 1px solid var(--success-color);
-            color: var(--success-color);
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--success-color);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--success-color);
-            animation: pulse 1.5s infinite;
+        .tab-btn:hover {
+            color: var(--text-main);
         }
 
-        @keyframes pulse {
-            0% { opacity: 0.4; }
-            50% { opacity: 1; }
-            100% { opacity: 0.4; }
+        .tab-btn.active {
+            background: var(--purple-gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 0, 128, 0.4);
         }
 
+        .tab-btn.active.affiliate-mode {
+            background: linear-gradient(135deg, #ffbd03, #ff0050);
+            box-shadow: 0 4px 15px rgba(255, 189, 3, 0.4);
+        }
+
+        /* Main Container */
         .main-container {
-            max-width: 1300px;
+            max-width: 1350px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1.1fr 0.9fr;
             gap: 30px;
         }
 
-        @media (max-width: 992px) {
+        @media (max-width: 1024px) {
             .main-container {
                 grid-template-columns: 1fr;
             }
         }
 
+        /* Glassmorphism Cards */
         .glass-card {
             background: var(--card-bg);
-            backdrop-filter: blur(16px);
+            backdrop-filter: blur(20px);
             border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        }
+
+        .card-header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
             border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .badge-normal {
+            background: rgba(0, 242, 254, 0.12);
+            color: var(--secondary-cyan);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+        }
+
+        .badge-affiliate {
+            background: rgba(255, 189, 3, 0.12);
+            color: var(--accent-gold);
+            border: 1px solid rgba(255, 189, 3, 0.3);
         }
 
         .card-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 24px;
             display: flex;
             align-items: center;
             gap: 10px;
-            color: var(--secondary-tiktok);
         }
 
+        /* Form Inputs */
         .form-group {
             margin-bottom: 20px;
         }
@@ -142,10 +185,10 @@
 
         .form-control {
             width: 100%;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.5);
             border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 14px 16px;
+            border-radius: 14px;
+            padding: 14px 18px;
             color: var(--text-main);
             font-size: 15px;
             transition: all 0.3s ease;
@@ -153,56 +196,61 @@
 
         .form-control:focus {
             outline: none;
-            border-color: var(--secondary-tiktok);
-            box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+            border-color: var(--secondary-cyan);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.25);
         }
 
         textarea.form-control {
             resize: vertical;
-            min-height: 90px;
+            min-height: 95px;
         }
 
-        .btn-generate {
+        /* Action Buttons */
+        .btn-submit {
             width: 100%;
-            padding: 16px;
+            padding: 18px;
             border: none;
-            border-radius: 14px;
-            background: linear-gradient(135deg, var(--primary-tiktok), #ff4d00);
+            border-radius: 16px;
             color: white;
-            font-size: 17px;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 6px 20px rgba(255, 0, 80, 0.4);
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
         }
 
-        .btn-generate:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(255, 0, 80, 0.6);
+        .btn-submit-normal {
+            background: var(--cyan-gradient);
+            color: #050510;
         }
 
-        .btn-generate:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
+        .btn-submit-affiliate {
+            background: linear-gradient(135deg, var(--accent-gold), var(--primary-tiktok));
+            color: white;
         }
 
-        /* Loading State */
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            filter: brightness(1.1);
+        }
+
+        /* Loading Animation Box */
         .loading-box {
             display: none;
             text-align: center;
-            padding: 30px;
+            padding: 40px 20px;
         }
 
         .spinner {
-            width: 50px;
-            height: 50px;
+            width: 55px;
+            height: 55px;
             border: 4px solid rgba(255, 255, 255, 0.1);
             border-top: 4px solid var(--primary-tiktok);
-            border-right: 4px solid var(--secondary-tiktok);
+            border-right: 4px solid var(--secondary-cyan);
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto 20px auto;
@@ -213,14 +261,8 @@
             100% { transform: rotate(360deg); }
         }
 
-        .loading-step {
-            font-size: 15px;
-            color: var(--secondary-tiktok);
-            margin-top: 8px;
-        }
-
-        /* Preview Section */
-        .preview-container {
+        /* Right Side: Preview & Phone Frame */
+        .preview-wrapper {
             display: flex;
             flex-direction: column;
             gap: 20px;
@@ -228,14 +270,14 @@
 
         .phone-frame {
             position: relative;
-            width: 280px;
-            height: 500px;
+            width: 270px;
+            height: 480px;
             background: #000;
-            border: 6px solid #222;
-            border-radius: 36px;
+            border: 7px solid #1c1c28;
+            border-radius: 38px;
             margin: 0 auto;
             overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(0, 242, 254, 0.2);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.8), 0 0 25px rgba(0, 242, 254, 0.2);
         }
 
         .phone-frame video {
@@ -247,12 +289,12 @@
         .phone-overlay {
             position: absolute;
             bottom: 20px;
-            left: 15px;
-            right: 15px;
+            left: 14px;
+            right: 14px;
             pointer-events: none;
         }
 
-        .basket-tag {
+        .basket-tag-preview {
             background: linear-gradient(135deg, #ffbd03, #ff8c00);
             color: #000;
             padding: 6px 12px;
@@ -263,21 +305,37 @@
             align-items: center;
             gap: 6px;
             margin-bottom: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
         }
 
-        .caption-preview {
+        .normal-tag-preview {
+            background: rgba(0, 242, 254, 0.2);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--secondary-cyan);
+            color: var(--secondary-cyan);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .caption-preview-overlay {
             font-size: 13px;
             line-height: 1.4;
             color: white;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            text-shadow: 0 2px 5px rgba(0,0,0,0.9);
         }
 
+        /* Metadata Cards */
         .meta-card {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 16px;
+            border-radius: 14px;
+            padding: 18px;
         }
 
         .meta-header {
@@ -293,62 +351,71 @@
             font-size: 15px;
             color: var(--text-main);
             white-space: pre-wrap;
+            word-break: break-word;
         }
 
         .copy-btn {
             background: transparent;
             border: none;
-            color: var(--secondary-tiktok);
+            color: var(--secondary-cyan);
             cursor: pointer;
             font-size: 13px;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
+            transition: opacity 0.2s;
         }
 
         .copy-btn:hover {
-            text-decoration: underline;
+            opacity: 0.8;
         }
 
+        /* Post Action Button */
         .btn-post {
             width: 100%;
-            padding: 16px;
+            padding: 18px;
             border: none;
-            border-radius: 14px;
+            border-radius: 16px;
             background: linear-gradient(135deg, #00e676, #00b0ff);
             color: black;
             font-size: 18px;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 6px 20px rgba(0, 230, 118, 0.4);
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 10px;
+            box-shadow: 0 8px 25px rgba(0, 230, 118, 0.35);
             transition: all 0.3s ease;
         }
 
         .btn-post:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 230, 118, 0.6);
+            box-shadow: 0 12px 30px rgba(0, 230, 118, 0.5);
         }
 
+        .btn-post:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Toast Popup */
         .toast {
             position: fixed;
             bottom: 30px;
             right: 30px;
-            background: var(--card-bg);
+            background: rgba(20, 20, 32, 0.95);
             border: 1px solid var(--success-color);
             color: var(--text-main);
             padding: 16px 24px;
-            border-radius: 12px;
+            border-radius: 14px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             transform: translateY(100px);
             opacity: 0;
-            transition: all 0.4s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 999;
         }
 
@@ -360,113 +427,142 @@
 </head>
 <body>
 
-    <!-- Header -->
+    <!-- Header Navigation -->
     <header class="header">
         <div class="logo">
             <i class="fa-brands fa-tiktok"></i>
-            <span>TikTok AI Affiliate Studio</span>
+            <span>TikTok AI Studio</span>
         </div>
-        <div class="badge-status">
-            <div class="dot"></div>
-            <span>DeepSeek AI & Edge-TTS Ready</span>
+
+        <!-- Mode Switcher Tabs -->
+        <div class="nav-tabs">
+            <button id="tabNormal" class="tab-btn active" onclick="switchMode('normal')">
+                <i class="fa-solid fa-fire"></i>
+                <span>1. คลิป AI ทั่วไป (ปั๊มผู้ติดตาม)</span>
+            </button>
+            <button id="tabAffiliate" class="tab-btn" onclick="switchMode('affiliate')">
+                <i class="fa-solid fa-basket-shopping"></i>
+                <span>2. คลิป AI + ปักตะกร้า (Affiliate)</span>
+            </button>
         </div>
     </header>
 
-    <!-- Main Grid -->
+    <!-- Main Workspace -->
     <div class="main-container">
         
-        <!-- Left Column: Input Form -->
+        <!-- Left Panel: Input Form -->
         <div class="glass-card">
-            <div class="card-title">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                <span>กรอกข้อมูลสินค้าเพื่อสร้างคอนเทนต์</span>
+            
+            <div id="badgeNormal" class="card-header-badge badge-normal">
+                <i class="fa-solid fa-user-plus"></i> โหมดสร้างตัวตน / เน้นไวรัล (ผู้ติดตาม < 1,000 คน)
+            </div>
+            <div id="badgeAffiliate" class="card-header-badge badge-affiliate" style="display: none;">
+                <i class="fa-solid fa-bag-shopping"></i> โหมดสร้างรายได้ TikTok Shop Affiliate (มีปักตะกร้า)
             </div>
 
-            <form id="generateForm">
-                <div class="form-group">
-                    <label><i class="fa-solid fa-link"></i> ลิงก์สินค้า TikTok Shop / Affiliate Link</label>
-                    <input type="text" id="affiliate_link" class="form-control" placeholder="https://vt.tiktok.com/xxxx..." value="https://vt.tiktok.com/sample" required>
+            <div class="card-title">
+                <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--secondary-cyan);"></i>
+                <span id="formTitle">กรอกคอนเซปต์คลิปวิดีโอ (โหมดทั่วไป)</span>
+            </div>
+
+            <form id="aiForm">
+                
+                <!-- Field: Product Link (Affiliate Mode Only) -->
+                <div id="groupAffiliateLink" class="form-group" style="display: none;">
+                    <label><i class="fa-solid fa-link" style="color: var(--accent-gold);"></i> ลิงก์สินค้า TikTok Shop / Affiliate Link</label>
+                    <input type="text" id="affiliate_link" class="form-control" placeholder="https://vt.tiktok.com/xxxx..." value="https://vt.tiktok.com/sample">
                 </div>
 
+                <!-- Field: Main Topic / Product Name -->
                 <div class="form-group">
-                    <label><i class="fa-solid fa-box"></i> ชื่อสินค้า</label>
-                    <input type="text" id="product_name" class="form-control" placeholder="เช่น หูฟังบลูทูธไร้สาย เสียงเบสแน่น" value="หูฟังบลูทูธไร้สาย เสียงเบสแน่น" required>
+                    <label id="lblTopicName"><i class="fa-solid fa-heading"></i> หัวข้อเรื่อง / คอนเซปต์คลิป</label>
+                    <input type="text" id="topic_name" class="form-control" placeholder="เช่น 5 เทคนิคตื่นเช้ามาสดชื่น หรือ หูฟังเบสแน่น" value="5 เทคนิคตื่นเช้าแบบไม่เพลีย" required>
                 </div>
 
+                <!-- Field: Category -->
                 <div class="form-group">
-                    <label><i class="fa-solid fa-tags"></i> หมวดหมู่สินค้า</label>
-                    <input type="text" id="product_category" class="form-control" placeholder="เช่น Gadget & IT, แฟชั่น, ความงาม" value="Gadget & IT">
+                    <label><i class="fa-solid fa-layer-group"></i> หมวดหมู่คอนเทนต์</label>
+                    <input type="text" id="category" class="form-control" placeholder="เช่น ไลฟ์สไตล์, สาระน่ารู้, IT Gadget" value="สาระน่ารู้ / ไลฟ์สไตล์">
                 </div>
 
+                <!-- Field: Highlights / Core Details -->
                 <div class="form-group">
-                    <label><i class="fa-solid fa-star"></i> จุดเด่นสินค้า (USP Highlights)</label>
-                    <textarea id="usp_highlights" class="form-control" placeholder="เช่น แบตอึด 40 ชม., ตัดเสียงรบกวน ANC, กันน้ำ IPX5">แบตอึด 40 ชม., ตัดเสียงรบกวน ANC, กันน้ำ IPX5, เบสแน่นตึ้บ</textarea>
+                    <label id="lblHighlights"><i class="fa-solid fa-star"></i> ประเด็นสำคัญที่ต้องการพูดในคลิป</label>
+                    <textarea id="highlights" class="form-control" placeholder="เช่น ดื่มน้ำ 1 แก้วทันทีที่ตื่น, ไม่จับมือถือ 15 นาทีแรก, ยืดสายตาดูแสงแดด">1. ดื่มน้ำเปล่า 1 แก้วทันทีที่ตื่น
+2. ห้ามเปิดดูแจ้งเตือนมือถือ 15 นาทีแรก
+3. ยืดตัวและรับแสงแดดยามเช้า 5 นาที</textarea>
                 </div>
 
+                <!-- Field: Target Audience / Tone -->
                 <div class="form-group">
-                    <label><i class="fa-solid fa-users"></i> กลุ่มเป้าหมาย</label>
-                    <input type="text" id="target_audience" class="form-control" placeholder="เช่น สายฟังเพลง, คนชอบออกกำลังกาย" value="คนชอบฟังเพลง, สายออกกำลังกาย">
+                    <label><i class="fa-solid fa-users"></i> กลุ่มเป้าหมาย & สไตล์น้ำเสียง</label>
+                    <input type="text" id="audience" class="form-control" placeholder="เช่น วัยทำงาน, นักเรียน, สไตล์เป็นกันเอง สนุกสนาน" value="คนทำงาน, วัยรุ่น, สไตล์สนุกสนานตื่นเต้น">
                 </div>
 
-                <button type="submit" id="btnSubmit" class="btn-generate">
+                <button type="submit" id="btnSubmit" class="btn-submit btn-submit-normal">
                     <i class="fa-solid fa-bolt"></i>
-                    <span>สร้างสคริปต์ AI & วิดีโอ MP4 ทันที</span>
+                    <span id="btnSubmitText">⚡ สร้างคลิป AI ทั่วไป ทันที</span>
                 </button>
             </form>
 
-            <!-- Loading Spinner -->
+            <!-- Loading Spinner Box -->
             <div id="loadingBox" class="loading-box">
                 <div class="spinner"></div>
-                <div style="font-size: 17px; font-weight: 600;">กำลังประมวลผลด้วย DeepSeek AI & Edge-TTS</div>
-                <div id="loadingStep" class="loading-step">🧠 กำลังคิดสคริปต์ไวรัลและแฮชแท็ก...</div>
+                <div style="font-size: 18px; font-weight: 700;">กำลังสร้างคอนเทนต์ด้วย DeepSeek AI</div>
+                <div id="loadingStep" style="font-size: 14px; color: var(--secondary-cyan); margin-top: 8px;">🧠 กำลังเขียนบทพากย์และแฮชแท็กไวรัล...</div>
             </div>
+
         </div>
 
-        <!-- Right Column: Live Preview & One-Click Post -->
-        <div class="glass-card preview-container">
+        <!-- Right Panel: Live Preview -->
+        <div class="glass-card preview-wrapper">
             <div class="card-title">
-                <i class="fa-solid fa-circle-play"></i>
+                <i class="fa-solid fa-mobile-screen-button" style="color: var(--primary-tiktok);"></i>
                 <span>ตัวอย่างวิดีโอ & คอนเทนต์ AI (Live Preview)</span>
             </div>
 
-            <!-- Mobile Phone Frame -->
+            <!-- Phone Frame -->
             <div class="phone-frame">
-                <video id="videoPlayer" controls loop poster="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80">
+                <video id="videoPlayer" controls loop poster="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80">
                     <source id="videoSource" src="" type="video/mp4">
-                    เบราว์เซอร์ไม่รองรับวิดีโอ
                 </video>
                 <div class="phone-overlay">
-                    <div class="basket-tag">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span>ปักตะกร้า: <span id="previewBasketName">หูฟังบลูทูธไร้สาย</span></span>
+                    
+                    <div id="previewNormalTag" class="normal-tag-preview">
+                        <i class="fa-solid fa-fire"></i> <span>คลิปทั่วไป (ปั๊มผู้ติดตาม)</span>
                     </div>
-                    <div class="caption-preview" id="phoneCaptionOverlay">
-                        คลิกปุ่มสร้างวิดีโอด้านซ้ายเพื่อเริ่มต้น preview คอนเทนต์...
+                    
+                    <div id="previewBasketTag" class="basket-tag-preview" style="display: none;">
+                        <i class="fa-solid fa-cart-shopping"></i> <span>ปักตะกร้า: <span id="previewBasketName">ชื่อสินค้า</span></span>
+                    </div>
+
+                    <div class="caption-preview-overlay" id="overlayTitle">
+                        กดปุ่มสร้างคลิปเพื่อดูตัวอย่างวิดีโอแบบเรียลไทม์...
                     </div>
                 </div>
             </div>
 
-            <!-- Metadata Display Cards -->
+            <!-- Metadata Cards -->
             <div class="meta-card">
                 <div class="meta-header">
-                    <span>📌 ชื่อคลิป (Video Title)</span>
-                    <button class="copy-btn" onclick="copyText('previewTitle')"><i class="fa-regular fa-copy"></i> คัดลอก</button>
+                    <span>📌 ชื่อคลิป (Title)</span>
+                    <button class="copy-btn" onclick="copyText('outTitle')"><i class="fa-regular fa-copy"></i> คัดลอก</button>
                 </div>
-                <div class="meta-body" id="previewTitle">กดปุ่มสร้างวิดีโอเพื่อเจนชื่อคลิป...</div>
+                <div class="meta-body" id="outTitle">กดปุ่มสร้างวิดีโอเพื่อเจนชื่อคลิป...</div>
             </div>
 
             <div class="meta-card">
                 <div class="meta-header">
-                    <span>💬 แคปชัน & แฮชแท็ก (Caption & #Hashtags)</span>
-                    <button class="copy-btn" onclick="copyText('previewCaption')"><i class="fa-regular fa-copy"></i> คัดลอก</button>
+                    <span>💬 แคปชัน & แฮชแท็ก (#Hashtags)</span>
+                    <button class="copy-btn" onclick="copyText('outCaption')"><i class="fa-regular fa-copy"></i> คัดลอก</button>
                 </div>
-                <div class="meta-body" id="previewCaption">กดปุ่มสร้างวิดีโอเพื่อเจนแคปชันและแฮชแท็ก...</div>
+                <div class="meta-body" id="outCaption">กดปุ่มสร้างวิดีโอเพื่อเจนแคปชัน...</div>
             </div>
 
-            <!-- One Click Post Button -->
+            <!-- Post Action Button -->
             <button id="btnPost" class="btn-post" disabled onclick="postToTikTok()">
                 <i class="fa-brands fa-tiktok"></i>
-                <span>🚀 กดโพสต์ลง TikTok พร้อมปักตะกร้าทันที</span>
+                <span id="btnPostText">🚀 กดโพสต์คลิปลง TikTok ทันที</span>
             </button>
         </div>
 
@@ -474,36 +570,90 @@
 
     <!-- Notification Toast -->
     <div id="toast" class="toast">
-        <i class="fa-solid fa-circle-check" style="color: var(--success-color); font-size: 20px;"></i>
+        <i class="fa-solid fa-circle-check" style="color: var(--success-color); font-size: 22px;"></i>
         <div>
-            <div id="toastTitle" style="font-weight: 600;">สำเร็จ!</div>
+            <div id="toastTitle" style="font-weight: 700;">สำเร็จ!</div>
             <div id="toastMsg" style="font-size: 13px; color: var(--text-sub);">โพสต์คลิปลง TikTok เรียบร้อยแล้ว</div>
         </div>
     </div>
 
     <script>
+        let currentMode = 'normal'; // 'normal' หรือ 'affiliate'
         let currentGeneratedData = null;
 
-        document.getElementById('generateForm').addEventListener('submit', async function(e) {
+        function switchMode(mode) {
+            currentMode = mode;
+
+            const tabNormal = document.getElementById('tabNormal');
+            const tabAffiliate = document.getElementById('tabAffiliate');
+            const badgeNormal = document.getElementById('badgeNormal');
+            const badgeAffiliate = document.getElementById('badgeAffiliate');
+            const groupAffiliateLink = document.getElementById('groupAffiliateLink');
+            const formTitle = document.getElementById('formTitle');
+            const lblTopicName = document.getElementById('lblTopicName');
+            const lblHighlights = document.getElementById('lblHighlights');
+            const btnSubmit = document.getElementById('btnSubmit');
+            const btnSubmitText = document.getElementById('btnSubmitText');
+            const previewNormalTag = document.getElementById('previewNormalTag');
+            const previewBasketTag = document.getElementById('previewBasketTag');
+            const btnPostText = document.getElementById('btnPostText');
+
+            if (mode === 'normal') {
+                tabNormal.className = 'tab-btn active';
+                tabAffiliate.className = 'tab-btn';
+                badgeNormal.style.display = 'inline-flex';
+                badgeAffiliate.style.display = 'none';
+                groupAffiliateLink.style.display = 'none';
+
+                formTitle.innerText = 'กรอกคอนเซปต์คลิปวิดีโอ (โหมดทั่วไป)';
+                lblTopicName.innerHTML = '<i class="fa-solid fa-heading"></i> หัวข้อเรื่อง / คอนเซปต์คลิป';
+                lblHighlights.innerHTML = '<i class="fa-solid fa-star"></i> ประเด็นสำคัญที่ต้องการพูดในคลิป';
+                
+                btnSubmit.className = 'btn-submit btn-submit-normal';
+                btnSubmitText.innerText = '⚡ สร้างคลิป AI ทั่วไป ทันที';
+                
+                previewNormalTag.style.display = 'inline-flex';
+                previewBasketTag.style.display = 'none';
+                btnPostText.innerText = '🚀 กดโพสต์คลิปทั่วไปลง TikTok ทันที';
+            } else {
+                tabNormal.className = 'tab-btn';
+                tabAffiliate.className = 'tab-btn active affiliate-mode';
+                badgeNormal.style.display = 'none';
+                badgeAffiliate.style.display = 'inline-flex';
+                groupAffiliateLink.style.display = 'block';
+
+                formTitle.innerText = 'กรอกข้อมูลสินค้าสำหรับปักตะกร้า (โหมด Affiliate)';
+                lblTopicName.innerHTML = '<i class="fa-solid fa-box"></i> ชื่อสินค้า';
+                lblHighlights.innerHTML = '<i class="fa-solid fa-star"></i> จุดเด่นสินค้า (USP Highlights)';
+                
+                btnSubmit.className = 'btn-submit btn-submit-affiliate';
+                btnSubmitText.innerText = '🛒 สร้างคลิป AI + ปักตะกร้า ทันที';
+
+                previewNormalTag.style.display = 'none';
+                previewBasketTag.style.display = 'inline-flex';
+                btnPostText.innerText = '🛒 กดโพสต์คลิป TikTok พร้อมปักตะกร้าทันที';
+            }
+        }
+
+        document.getElementById('aiForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
-            const form = document.getElementById('generateForm');
-            const btnSubmit = document.getElementById('btnSubmit');
+            const form = document.getElementById('aiForm');
             const loadingBox = document.getElementById('loadingBox');
             const loadingStep = document.getElementById('loadingStep');
 
             form.style.display = 'none';
             loadingBox.style.display = 'block';
 
-            // Simulate steps
             setTimeout(() => { loadingStep.innerText = '🗣️ กำลังพากย์เสียงภาษาไทยด้วย Edge-TTS...'; }, 2000);
-            setTimeout(() => { loadingStep.innerText = '🎬 กำลังประกอบไฟล์วิดีโอ MP4 9:16...'; }, 4000);
+            setTimeout(() => { loadingStep.innerText = '🎬 กำลังประกอบวิดีโอ MP4 9:16...'; }, 4000);
 
             const payload = {
-                product_name: document.getElementById('product_name').value,
-                product_category: document.getElementById('product_category').value,
-                usp_highlights: document.getElementById('usp_highlights').value,
-                target_audience: document.getElementById('target_audience').value,
+                mode: currentMode,
+                product_name: document.getElementById('topic_name').value,
+                product_category: document.getElementById('category').value,
+                usp_highlights: document.getElementById('highlights').value,
+                target_audience: document.getElementById('audience').value,
                 affiliate_link: document.getElementById('affiliate_link').value
             };
 
@@ -526,16 +676,17 @@
                     videoPlayer.load();
                     videoPlayer.play();
 
-                    // Update Text Metadata
-                    document.getElementById('previewTitle').innerText = data.title;
-                    document.getElementById('previewCaption').innerText = data.caption + '\n\n' + data.hashtags;
-                    document.getElementById('previewBasketName').innerText = data.product_name;
-                    document.getElementById('phoneCaptionOverlay').innerText = data.title;
+                    // Update Text Outputs
+                    document.getElementById('outTitle').innerText = data.title;
+                    document.getElementById('outCaption').innerText = data.caption + '\n\n' + data.hashtags;
+                    document.getElementById('overlayTitle').innerText = data.title;
+                    
+                    if (currentMode === 'affiliate') {
+                        document.getElementById('previewBasketName').innerText = data.product_name;
+                    }
 
-                    // Enable Post Button
                     document.getElementById('btnPost').disabled = false;
-
-                    showToast('สำเร็จ!', 'สร้างวิดีโอและคอนเทนต์เรียบร้อยพร้อมโพสต์แล้ว');
+                    showToast('สำเร็จ!', 'สร้างคอนเทนต์วิดีโอเรียบร้อยพร้อมโพสต์แล้ว');
                 } else {
                     alert('เกิดข้อผิดพลาด: ' + data.message);
                 }
@@ -552,7 +703,7 @@
 
             const btnPost = document.getElementById('btnPost');
             btnPost.disabled = true;
-            btnPost.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังอัปโหลดลง TikTok...';
+            btnPost.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังโพสต์ลง TikTok...';
 
             try {
                 const response = await fetch('/api/post-tiktok', {
@@ -564,7 +715,7 @@
                 const resData = await response.json();
 
                 if (resData.status === 'success') {
-                    showToast('🎉 โพสต์ลง TikTok สำเร็จ!', 'คลิปวิดีโอพร้อมปักตะกร้าถูกเผยแพร่บน TikTok แล้ว');
+                    showToast('🎉 โพสต์สำเร็จ!', resData.message || 'คลิปวิดีโอถูกเผยแพร่ลง TikTok เรียบร้อยแล้ว');
                 } else {
                     alert('ไม่สามารถโพสต์ได้: ' + resData.message);
                 }
@@ -572,14 +723,18 @@
                 alert('เกิดข้อผิดพลาดในการโพสต์: ' + err.message);
             } finally {
                 btnPost.disabled = false;
-                btnPost.innerHTML = '<i class="fa-brands fa-tiktok"></i> 🚀 กดโพสต์ลง TikTok พร้อมปักตะกร้าทันที';
+                if (currentMode === 'affiliate') {
+                    btnPost.innerHTML = '<i class="fa-brands fa-tiktok"></i> 🛒 กดโพสต์คลิป TikTok พร้อมปักตะกร้าทันที';
+                } else {
+                    btnPost.innerHTML = '<i class="fa-brands fa-tiktok"></i> 🚀 กดโพสต์คลิปทั่วไปลง TikTok ทันที';
+                }
             }
         }
 
         function copyText(elementId) {
             const text = document.getElementById(elementId).innerText;
             navigator.clipboard.writeText(text);
-            showToast('คัดลอกแล้ว!', 'ก๊อปปี้ข้อความลงคลิปบอร์ดเรียบร้อย');
+            showToast('คัดลอกแล้ว!', 'ก๊อปปี้ข้อความเรียบร้อย');
         }
 
         function showToast(title, msg) {
